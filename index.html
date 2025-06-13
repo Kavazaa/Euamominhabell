@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Dia dos Namorados, Meu Amor!</title>
+    
+    <!-- Importação das fontes do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+    <!-- Os estilos (CSS) estão incorporados aqui para manter tudo num só ficheiro -->
+    <style>
+        :root {
+            --primary-color: #c2185b; /* Rosa escuro */
+            --secondary-color: #ff8a80; /* Vermelho coral */
+            --background-color: #fce4ec; /* Rosa bem clarinho */
+            --text-dark: #4e342e; /* Castanho escuro */
+            --text-light: #8d6e63; /* Castanho claro */
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Contentor para os corações animados */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--secondary-color);
+            opacity: 0.7;
+            transform: rotate(-45deg);
+            animation: fly 12s linear infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+        }
+
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { top: 0; left: 10px; }
+
+        @keyframes fly {
+            0% {
+                transform: translateY(100vh) rotate(-45deg) scale(1);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(-45deg) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        header h2 {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 300;
+            margin-top: 10px;
+        }
+
+        /* Secção das fotos sobrepostas */
+        .polaroids {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+            position: relative;
+            height: 400px; /* Aumentei a altura para dar mais espaço */
+        }
+
+        .polaroid {
+            position: absolute;
+            background: var(--white);
+            padding: 15px; /* Padding igual em todos os lados para a moldura */
+            border-radius: 4px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        .polaroid:hover {
+            transform: scale(1.05) !important;
+            z-index: 10;
+        }
+        .polaroid img {
+            width: 250px;
+            height: 250px; /* Define a imagem como um quadrado */
+            object-fit: cover;
+            display: block; /* Remove espaço extra debaixo da imagem */
+        }
+        .polaroid.p1 {
+            /* Afasta para a esquerda e roda */
+            transform: translateX(-40px) rotate(-7deg);
+        }
+        .polaroid.p2 {
+            /* Afasta para a direita e roda */
+            transform: translateX(40px) rotate(8deg);
+        }
+
+        #timer-section {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        #timer-section h3 {
+            font-size: clamp(1.5rem, 5vw, 1.8rem);
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        #timer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .time-unit {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            min-width: 80px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .time-unit:hover {
+            transform: translateY(-5px);
+        }
+
+        .time-unit span {
+            display: block;
+            font-size: clamp(2rem, 8vw, 3rem);
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .time-unit p {
+            margin: 0;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .gallery {
+            padding: 50px 20px;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .gallery-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        .gallery-title h2 {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 7vw, 2.8rem);
+            color: var(--primary-color);
+            margin-bottom: 50px;
+            margin: 0;
+        }
+        .gallery-title .icon {
+            height: 40px;
+            width: 40px;
+            fill: var(--primary-color);
+            margin-bottom: 50px;
+        }
+        
+        .moment {
+            display: flex;
+            align-items: center;
+            margin-bottom: 60px;
+            gap: 30px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+        .moment:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .moment.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .image-placeholder {
+            flex-shrink: 0;
+            width: 45%;
+            aspect-ratio: 1 / 1;
+            background: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.4s ease;
+        }
+        .image-placeholder:hover img {
+            transform: scale(1.05);
+        }
+
+        .text {
+            width: 55%;
+        }
+
+        .text h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .text p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        /* Oculta o leitor do YouTube */
+        .video-background {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .polaroids {
+                height: auto;
+                flex-direction: column;
+                gap: 20px;
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            .polaroid {
+                position: static;
+                transform: rotate(0) !important;
+            }
+            .moment, .moment.reverse {
+                flex-direction: column;
+            }
+
+            .image-placeholder, .text {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hearts-container"></div>
+
+    <header>
+        <h1>Para o Amor da Minha Vida</h1>
+        <h2>Isabella & João Pedro</h2>
+    </header>
+
+    <main>
+
+        <section class="polaroids">
+            <div class="polaroid p1">
+                 <!-- Substitua pelo nome do seu ficheiro de imagem -->
+                <img src="foto-principal-1.jpg" alt="Foto de João Pedro e Isabella">
+            </div>
+            <div class="polaroid p2">
+                 <!-- Substitua pelo nome do seu ficheiro de imagem -->
+                <img src="foto-principal-2.jpg" alt="Outra foto de João Pedro e Isabella">
+            </div>
+        </section>
+
+        <section id="timer-section">
+            <h3>O nosso tempo juntos:</h3>
+            <div id="timer">
+                <div class="time-unit"><span id="years">0</span><p>Anos</p></div>
+                <div class="time-unit"><span id="months">0</span><p>Meses</p></div>
+                <div class="time-unit"><span id="days">0</span><p>Dias</p></div>
+                <div class="time-unit"><span id="hours">0</span><p>Horas</p></div>
+                <div class="time-unit"><span id="minutes">0</span><p>Minutos</p></div>
+                <div class="time-unit"><span id="seconds">0</span><p>Segundos</p></div>
+            </div>
+        </section>
+
+        <section class="gallery">
+            <div class="gallery-title">
+                 <!-- Ícone de rolo de filme, a piscar o olho à paixão dela por cinema -->
+                <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.5 6.5V17.5C20.5 18.6046 19.6046 19.5 18.5 19.5H5.5C4.39543 19.5 3.5 18.6046 3.5 17.5V6.5C3.5 5.39543 4.39543 4.5 5.5 4.5H18.5C19.6046 4.5 20.5 5.39543 20.5 6.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 9.5H2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 14.5H2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 9.5H20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 14.5H20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <h2>Os Nossos Momentos Especiais</h2>
+            </div>
+
+            <div class="moment">
+                <div class="image-placeholder">
+                    <img src="date-nosferatu.jpg" alt="Um par de bilhetes de cinema rasgados">
+                </div>
+                <div class="text">
+                    <h3>Dates Inesquecíveis</h3>
+                    <p>O que há de mais inesquecível do que o primeiro, não é? Levaste-me a ver Nosferatu e, meu Deus, que filme maldito. Mas foi algo que marcou imenso. Ter de cancelar o pedido no Outback porque nenhum de nós tinha apetite foi uma coisa que nunca me tinha acontecido. E eu adoro cada detalhe dessa história.</p>
+                </div>
+            </div>
+
+            <div class="moment reverse">
+                <div class="image-placeholder">
+                    <img src="casa-videogame.jpg" alt="Dois comandos de videogame lado a lado num sofá">
+                </div>
+                <div class="text">
+                    <h3>O Conforto de Ficar em Casa</h3>
+                    <p>Muita gente não gosta, mas eu acho incrível como é bom ficar contigo sem fazer absolutamente nada. Só o facto de estares por perto já me deixa tranquilo. Descansar, jogar videogame e ficar abraçadinho contigo é, com certeza, melhor do que muito date por aí.</p>
+                </div>
+            </div>
+
+            <div class="moment">
+                <div class="image-placeholder">
+                     <img src="viagens-sonho.jpg" alt="Um mapa-mundo com pins em vários locais de sonho">
+                </div>
+                <div class="text">
+                    <h3>As Nossas Viagens</h3>
+                    <p>Elas ainda não aconteceram, mas eu penso todos os dias no momento em que vamos viajar juntos. Sinto que vai ser hilariante e tenso, porque mesmo sendo responsáveis, somos dois imbecis. E mal posso esperar por cada segundo dessa aventura.</p>
+                </div>
+            </div>
+             
+            <div class="moment reverse">
+                <div class="image-placeholder">
+                     <img src="simplesmente-nos.jpg" alt="Uma garrafa de Smirnoff Ice e um Funko Pop da Coraline">
+                </div>
+                <div class="text">
+                    <h3>Simplesmente Nós</h3>
+                    <p>Nos momentos de bobeira, nas conversas sérias, no apoio incondicional. Seja a ver um anime ou a dividir uma Smirnoff Ice, é na simplicidade do dia a dia que encontro a certeza do nosso amor. Amo-te por tudo o que és e por tudo o que somos juntos.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Feito com todo o carinho do mundo para ti. ❤️</p>
+    </footer>
+
+    <!-- Música de fundo - Incondicional (Instrumental) -->
+    <!-- Nota: Alguns navegadores bloqueiam o autoplay. Pode ser necessário um clique na página para a música começar. -->
+    <div class="video-background">
+        <iframe 
+            width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/gT5g2hN4J5s?autoplay=1&loop=1&playlist=gT5g2hN4J5s" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- CONFIGURAÇÃO DO CONTADOR ---
+            const startDate = new Date('2025-03-08T15:00:00');
+
+            const yearsEl = document.getElementById('years');
+            const monthsEl = document.getElementById('months');
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+
+            function updateTimer() {
+                const now = new Date();
+                if (now < startDate) return;
+
+                let years = now.getFullYear() - startDate.getFullYear();
+                let months = now.getMonth() - startDate.getMonth();
+                let days = now.getDate() - startDate.getDate();
+                let hours = now.getHours() - startDate.getHours();
+                let minutes = now.getMinutes() - startDate.getMinutes();
+                let seconds = now.getSeconds() - startDate.getSeconds();
+
+                if (seconds < 0) { seconds += 60; minutes--; }
+                if (minutes < 0) { minutes += 60; hours--; }
+                if (hours < 0) { hours += 24; days--; }
+                if (days < 0) {
+                    const daysInLastMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                    days += daysInLastMonth;
+                    months--;
+                }
+                if (months < 0) { months += 12; years--; }
+                
+                yearsEl.innerText = years;
+                monthsEl.innerText = months;
+                daysEl.innerText = days;
+                hoursEl.innerText = hours;
+                minutesEl.innerText = minutes;
+                secondsEl.innerText = seconds;
+            }
+
+            setInterval(updateTimer, 1000);
+            updateTimer();
+
+            // --- CRIAÇÃO DOS CORAÇÕES ANIMADOS ---
+            const heartsContainer = document.querySelector('.hearts-container');
+            const heartsToCreate = 25;
+
+            for (let i = 0; i < heartsToCreate; i++) {
+                let heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 7 + 8 + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heartsContainer.appendChild(heart);
+            }
+        });
+    </script>
+</body>
+</html>
