@@ -29,6 +29,52 @@
             padding: 0;
             overflow-x: hidden;
         }
+        
+        /* Estilos para a sobreposição de música */
+        #music-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .overlay-content {
+            text-align: center;
+            color: var(--white);
+            padding: 40px;
+        }
+        
+        .overlay-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        #play-music-btn {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 35px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        #play-music-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
 
         /* Contentor para os corações animados */
         .hearts-container {
@@ -65,14 +111,8 @@
         .heart::after { top: 0; left: 10px; }
 
         @keyframes fly {
-            0% {
-                transform: translateY(100vh) rotate(-45deg) scale(1);
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-10vh) rotate(-45deg) scale(0.2);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) rotate(-45deg) scale(1); opacity: 0.7; }
+            100% { transform: translateY(-10vh) rotate(-45deg) scale(0.2); opacity: 0; }
         }
 
         header {
@@ -102,35 +142,21 @@
             align-items: center;
             padding: 50px 20px;
             position: relative;
-            height: 400px; /* Aumentei a altura para dar mais espaço */
+            height: 400px;
         }
 
         .polaroid {
             position: absolute;
             background: var(--white);
-            padding: 15px; /* Padding igual em todos os lados para a moldura */
+            padding: 15px;
             border-radius: 4px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             transition: transform 0.3s ease;
         }
-        .polaroid:hover {
-            transform: scale(1.05) !important;
-            z-index: 10;
-        }
-        .polaroid img {
-            width: 250px;
-            height: 250px; /* Define a imagem como um quadrado */
-            object-fit: cover;
-            display: block; /* Remove espaço extra debaixo da imagem */
-        }
-        .polaroid.p1 {
-            /* Afasta para a esquerda e roda */
-            transform: translateX(-40px) rotate(-7deg);
-        }
-        .polaroid.p2 {
-            /* Afasta para a direita e roda */
-            transform: translateX(40px) rotate(8deg);
-        }
+        .polaroid:hover { transform: scale(1.05) !important; z-index: 10; }
+        .polaroid img { width: 250px; height: 250px; object-fit: cover; display: block; }
+        .polaroid.p1 { transform: translateX(-40px) rotate(-7deg); }
+        .polaroid.p2 { transform: translateX(40px) rotate(8deg); }
 
         #timer-section {
             text-align: center;
@@ -138,161 +164,55 @@
             background-color: rgba(255, 255, 255, 0.7);
         }
 
-        #timer-section h3 {
-            font-size: clamp(1.5rem, 5vw, 1.8rem);
-            margin-bottom: 30px;
-            color: var(--primary-color);
-        }
+        #timer-section h3 { font-size: clamp(1.5rem, 5vw, 1.8rem); margin-bottom: 30px; color: var(--primary-color); }
+        #timer { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; }
+        .time-unit { background: var(--white); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); min-width: 80px; transition: transform 0.2s ease-in-out; }
+        .time-unit:hover { transform: translateY(-5px); }
+        .time-unit span { display: block; font-size: clamp(2rem, 8vw, 3rem); font-weight: bold; color: var(--text-dark); }
+        .time-unit p { margin: 0; font-size: 0.9em; color: var(--text-light); }
 
-        #timer {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .time-unit {
-            background: var(--white);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            min-width: 80px;
-            transition: transform 0.2s ease-in-out;
-        }
-        .time-unit:hover {
-            transform: translateY(-5px);
-        }
-
-        .time-unit span {
-            display: block;
-            font-size: clamp(2rem, 8vw, 3rem);
-            font-weight: bold;
-            color: var(--text-dark);
-        }
-
-        .time-unit p {
-            margin: 0;
-            font-size: 0.9em;
-            color: var(--text-light);
-        }
-
-        .gallery {
-            padding: 50px 20px;
-            max-width: 1000px;
-            margin: 40px auto;
-        }
-
-        .gallery-title {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-        }
-        .gallery-title h2 {
-            text-align: center;
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.2rem, 7vw, 2.8rem);
-            color: var(--primary-color);
-            margin-bottom: 50px;
-            margin: 0;
-        }
-        .gallery-title .icon {
-            height: 40px;
-            width: 40px;
-            fill: var(--primary-color);
-            margin-bottom: 50px;
-        }
+        .gallery { padding: 50px 20px; max-width: 1000px; margin: 40px auto; }
+        .gallery-title { display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .gallery-title h2 { text-align: center; font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 7vw, 2.8rem); color: var(--primary-color); margin-bottom: 50px; margin: 0; }
+        .gallery-title .icon { height: 40px; width: 40px; fill: var(--primary-color); margin-bottom: 50px; }
         
-        .moment {
-            display: flex;
-            align-items: center;
-            margin-bottom: 60px;
-            gap: 30px;
-            background: var(--white);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            transition: box-shadow 0.3s ease;
-        }
-        .moment:hover {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-        }
-        
-        .moment.reverse {
-            flex-direction: row-reverse;
-        }
+        .moment { display: flex; align-items: center; margin-bottom: 60px; gap: 30px; background: var(--white); padding: 30px; border-radius: 15px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); transition: box-shadow 0.3s ease; }
+        .moment:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12); }
+        .moment.reverse { flex-direction: row-reverse; }
 
-        .image-placeholder {
-            flex-shrink: 0;
-            width: 45%;
-            aspect-ratio: 1 / 1;
-            background: #f5f5f5;
-            border-radius: 10px;
-            overflow: hidden;
-        }
+        .image-placeholder { flex-shrink: 0; width: 45%; aspect-ratio: 1 / 1; background: #f5f5f5; border-radius: 10px; overflow: hidden; }
+        .image-placeholder img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; transition: transform 0.4s ease; }
+        .image-placeholder:hover img { transform: scale(1.05); }
 
-        .image-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.4s ease;
-        }
-        .image-placeholder:hover img {
-            transform: scale(1.05);
-        }
+        .text { width: 55%; }
+        .text h3 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 5vw, 2rem); color: var(--primary-color); margin-top: 0; }
+        .text p { font-size: 1.1em; line-height: 1.6; }
 
-        .text {
-            width: 55%;
-        }
-
-        .text h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.5rem, 5vw, 2rem);
-            color: var(--primary-color);
-            margin-top: 0;
-        }
-
-        .text p {
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-        
-        /* Oculta o leitor do YouTube */
-        .video-background {
-            display: none;
-        }
+        footer { text-align: center; padding: 20px; background-color: var(--primary-color); color: var(--white); }
 
         @media (max-width: 768px) {
-            .polaroids {
-                height: auto;
-                flex-direction: column;
-                gap: 20px;
-                padding-top: 20px;
-                padding-bottom: 20px;
-            }
-            .polaroid {
-                position: static;
-                transform: rotate(0) !important;
-            }
-            .moment, .moment.reverse {
-                flex-direction: column;
-            }
-
-            .image-placeholder, .text {
-                width: 100%;
-            }
+            .polaroids { height: auto; flex-direction: column; gap: 20px; padding-top: 20px; padding-bottom: 20px; }
+            .polaroid { position: static; transform: rotate(0) !important; }
+            .moment, .moment.reverse { flex-direction: column; }
+            .image-placeholder, .text { width: 100%; }
         }
     </style>
 </head>
 <body>
+    
+    <!-- ALTERADO: Arquivo de áudio local. Lembre-se de colocar o mp3 na mesma pasta -->
+    <audio id="background-music" loop>
+        <source src="incondicional-instrumental.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- Sobreposição para iniciar a música -->
+    <div id="music-overlay">
+        <div class="overlay-content">
+            <h3>Uma surpresa para você...</h3>
+            <button id="play-music-btn">Clica aqui rs</button>
+        </div>
+    </div>
 
     <div class="hearts-container"></div>
 
@@ -305,17 +225,15 @@
 
         <section class="polaroids">
             <div class="polaroid p1">
-                 <!-- Substitua pelo nome do seu ficheiro de imagem -->
                 <img src="foto-principal-1.jpg" alt="Foto de João Pedro e Isabella">
             </div>
             <div class="polaroid p2">
-                 <!-- Substitua pelo nome do seu ficheiro de imagem -->
                 <img src="foto-principal-2.jpg" alt="Outra foto de João Pedro e Isabella">
             </div>
         </section>
 
         <section id="timer-section">
-            <h3>O nosso tempo juntos:</h3>
+            <h3>Nosso tempo juntos:</h3>
             <div id="timer">
                 <div class="time-unit"><span id="years">0</span><p>Anos</p></div>
                 <div class="time-unit"><span id="months">0</span><p>Meses</p></div>
@@ -328,76 +246,50 @@
 
         <section class="gallery">
             <div class="gallery-title">
-                 <!-- Ícone de rolo de filme, a piscar o olho à paixão dela por cinema -->
                 <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.5 6.5V17.5C20.5 18.6046 19.6046 19.5 18.5 19.5H5.5C4.39543 19.5 3.5 18.6046 3.5 17.5V6.5C3.5 5.39543 4.39543 4.5 5.5 4.5H18.5C19.6046 4.5 20.5 5.39543 20.5 6.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 9.5H2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 14.5H2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 9.5H20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 14.5H20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <h2>Os Nossos Momentos Especiais</h2>
+                <h2>Nossos Momentos Especiais</h2>
             </div>
 
             <div class="moment">
-                <div class="image-placeholder">
-                    <img src="date-nosferatu.jpg" alt="Um par de bilhetes de cinema rasgados">
-                </div>
-                <div class="text">
-                    <h3>Dates Inesquecíveis</h3>
-                    <p>O que há de mais inesquecível do que o primeiro, não é? Levaste-me a ver Nosferatu e, meu Deus, que filme maldito. Mas foi algo que marcou imenso. Ter de cancelar o pedido no Outback porque nenhum de nós tinha apetite foi uma coisa que nunca me tinha acontecido. E eu adoro cada detalhe dessa história.</p>
-                </div>
+                <div class="image-placeholder"><img src="date-nosferatu.jpg" alt="Um par de bilhetes de cinema rasgados"></div>
+                <div class="text"><h3>Dates Inesquecíveis</h3><p>O que tem de mais inesquecível que o primeiro, né? Você me levou pra assistir Nosferatu e, meu Deus, que filme maldito kkkk, mas foi algo que marcou bastante. Ter que cancelar um pedido no Outback porque nenhum dos dois tinha apetite foi uma coisa que nunca tinha me acontecido. E eu adoro cada detalhe dessa história.</p></div>
             </div>
-
             <div class="moment reverse">
-                <div class="image-placeholder">
-                    <img src="casa-videogame.jpg" alt="Dois comandos de videogame lado a lado num sofá">
-                </div>
-                <div class="text">
-                    <h3>O Conforto de Ficar em Casa</h3>
-                    <p>Muita gente não gosta, mas eu acho incrível como é bom ficar contigo sem fazer absolutamente nada. Só o facto de estares por perto já me deixa tranquilo. Descansar, jogar videogame e ficar abraçadinho contigo é, com certeza, melhor do que muito date por aí.</p>
-                </div>
+                <div class="image-placeholder"><img src="casa-videogame.jpg" alt="Dois controles de videogame lado a lado num sofá"></div>
+                <div class="text"><h3>O Conforto de Ficar em Casa</h3><p>Muita gente não gosta, mas eu acho incrível como é bom ficar com você sem fazer absolutamente nada. Só o fato de você estar por perto já me deixa tranquilo. Descansar, jogar videogame e ficar abraçadinho com você com certeza é melhor do que muito date por aí.</p></div>
             </div>
-
             <div class="moment">
-                <div class="image-placeholder">
-                     <img src="viagens-sonho.jpg" alt="Um mapa-mundo com pins em vários locais de sonho">
-                </div>
-                <div class="text">
-                    <h3>As Nossas Viagens</h3>
-                    <p>Elas ainda não aconteceram, mas eu penso todos os dias no momento em que vamos viajar juntos. Sinto que vai ser hilariante e tenso, porque mesmo sendo responsáveis, somos dois imbecis. E mal posso esperar por cada segundo dessa aventura.</p>
-                </div>
+                <div class="image-placeholder"><img src="viagens-sonho.jpg" alt="Um mapa-múndi com pins em vários locais de sonho"></div>
+                <div class="text"><h3>Nossas Viagens</h3><p>Elas ainda não aconteceram, mas eu penso todos os dias no momento em que a gente vai viajar junto. Sinto que vai ser engraçado e tenso, porque mesmo sendo responsáveis, somos dois imbecis. E mal posso esperar por cada segundo dessa aventura.</p></div>
             </div>
-             
             <div class="moment reverse">
-                <div class="image-placeholder">
-                     <img src="simplesmente-nos.jpg" alt="Uma garrafa de Smirnoff Ice e um Funko Pop da Coraline">
-                </div>
-                <div class="text">
-                    <h3>Simplesmente Nós</h3>
-                    <p>Nos momentos de bobeira, nas conversas sérias, no apoio incondicional. Seja a ver um anime ou a dividir uma Smirnoff Ice, é na simplicidade do dia a dia que encontro a certeza do nosso amor. Amo-te por tudo o que és e por tudo o que somos juntos.</p>
-                </div>
+                <div class="image-placeholder"><img src="simplesmente-nos.jpg" alt="Uma garrafa de Smirnoff Ice e um Funko Pop da Coraline"></div>
+                <div class="text"><h3>Simplesmente Nós</h3><p>Nos momentos de bobeira, nas conversas sérias, no apoio incondicional. Seja vendo um anime ou dividindo uma Smirnoff Ice, é na simplicidade do dia a dia que eu encontro a certeza do nosso amor. Te amo por tudo que você é e por tudo que somos juntos.</p></div>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p>Feito com todo o carinho do mundo para ti. ❤️</p>
-    </footer>
+    <footer><p>Feito com todo o carinho do mundo pra você. ❤️</p></footer>
 
-    <!-- Música de fundo - Incondicional (Instrumental) -->
-    <!-- Nota: Alguns navegadores bloqueiam o autoplay. Pode ser necessário um clique na página para a música começar. -->
-    <div class="video-background">
-        <iframe 
-            width="560" 
-            height="315" 
-            src="https://www.youtube.com/embed/gT5g2hN4J5s?autoplay=1&loop=1&playlist=gT5g2hN4J5s" 
-            title="YouTube video player" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-        </iframe>
-    </div>
-
+    <!-- Lógica do JavaScript para controlar o botão e a música -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- CONFIGURAÇÃO DO CONTADOR ---
-            const startDate = new Date('2025-03-08T15:00:00');
+            // ALTERADO: Lógica para tocar o áudio local
+            const playButton = document.getElementById('play-music-btn');
+            const musicOverlay = document.getElementById('music-overlay');
+            const backgroundMusic = document.getElementById('background-music');
 
+            playButton.addEventListener('click', () => {
+                backgroundMusic.play();
+                
+                musicOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    musicOverlay.style.display = 'none';
+                }, 500);
+            });
+
+            // --- CÓDIGO DO CONTADOR (inalterado) ---
+            const startDate = new Date('2025-03-08T15:00:00');
             const yearsEl = document.getElementById('years');
             const monthsEl = document.getElementById('months');
             const daysEl = document.getElementById('days');
@@ -437,7 +329,7 @@
             setInterval(updateTimer, 1000);
             updateTimer();
 
-            // --- CRIAÇÃO DOS CORAÇÕES ANIMADOS ---
+            // --- CÓDIGO DOS CORAÇÕES (inalterado) ---
             const heartsContainer = document.querySelector('.hearts-container');
             const heartsToCreate = 25;
 
