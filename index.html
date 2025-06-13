@@ -30,52 +30,6 @@
             overflow-x: hidden;
         }
         
-        /* Estilos para a sobreposição de música */
-        #music-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
-        }
-        
-        .overlay-content {
-            text-align: center;
-            color: var(--white);
-            padding: 40px;
-        }
-        
-        .overlay-content h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-
-        #play-music-btn {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: none;
-            border-radius: 50px;
-            padding: 15px 35px;
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        #play-music-btn:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
         /* Contentor para os corações animados */
         .hearts-container {
             position: fixed;
@@ -158,6 +112,90 @@
         .polaroid.p1 { transform: translateX(-40px) rotate(-7deg); }
         .polaroid.p2 { transform: translateX(40px) rotate(8deg); }
 
+        /* NOVO: Player de música personalizado */
+        .music-player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin-top: -20px;
+            margin-bottom: 20px;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            background-color: var(--white);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        #play-pause-btn {
+            background-color: var(--primary-color);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #play-pause-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        #play-pause-btn svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--white);
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .volume-control svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-light);
+        }
+        #volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100px;
+            height: 5px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+        #volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+        #volume-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        #player-text {
+            margin-top: 15px;
+            color: var(--primary-color);
+            font-weight: bold;
+            transition: opacity 0.5s;
+        }
+
         #timer-section {
             text-align: center;
             padding: 40px 20px;
@@ -189,6 +227,9 @@
         .text p { font-size: 1.1em; line-height: 1.6; }
 
         footer { text-align: center; padding: 20px; background-color: var(--primary-color); color: var(--white); }
+        
+        /* Esconde o player do YouTube */
+        #youtube-player { display: none; }
 
         @media (max-width: 768px) {
             .polaroids { height: auto; flex-direction: column; gap: 20px; padding-top: 20px; padding-bottom: 20px; }
@@ -200,20 +241,6 @@
 </head>
 <body>
     
-    <!-- ALTERADO: Arquivo de áudio local. Lembre-se de colocar o mp3 na mesma pasta -->
-    <audio id="background-music" loop>
-        <source src="incondicional-instrumental.mp3" type="audio/mpeg">
-        Seu navegador não suporta o elemento de áudio.
-    </audio>
-
-    <!-- Sobreposição para iniciar a música -->
-    <div id="music-overlay">
-        <div class="overlay-content">
-            <h3>Uma surpresa para você...</h3>
-            <button id="play-music-btn">Clica aqui rs</button>
-        </div>
-    </div>
-
     <div class="hearts-container"></div>
 
     <header>
@@ -232,6 +259,28 @@
             </div>
         </section>
 
+        <!-- NOVO: Player de música personalizado -->
+        <div class="music-player-container">
+            <div class="player-controls">
+                <div class="volume-control">
+                    <!-- Icone de Volume Baixo -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 12h-2V8h2v4Zm3-4H4v12h16V8Zm-2 10H6V10h12v8Z"/></svg>
+                </div>
+                <button id="play-pause-btn">
+                    <!-- Icone de Play -->
+                    <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5z"/></svg>
+                    <!-- Icone de Pause (escondido inicialmente) -->
+                    <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <div class="volume-control">
+                    <input type="range" id="volume-slider" min="0" max="100" value="70">
+                    <!-- Icone de Volume Alto -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                </div>
+            </div>
+            <p id="player-text">Clica aqui hehehe</p>
+        </div>
+
         <section id="timer-section">
             <h3>Nosso tempo juntos:</h3>
             <div id="timer">
@@ -249,99 +298,144 @@
                 <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.5 6.5V17.5C20.5 18.6046 19.6046 19.5 18.5 19.5H5.5C4.39543 19.5 3.5 18.6046 3.5 17.5V6.5C3.5 5.39543 4.39543 4.5 5.5 4.5H18.5C19.6046 4.5 20.5 5.39543 20.5 6.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 4.5V2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 21.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 9.5H2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 14.5H2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 9.5H20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.5 14.5H20.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <h2>Nossos Momentos Especiais</h2>
             </div>
-
-            <div class="moment">
-                <div class="image-placeholder"><img src="date-nosferatu.jpg" alt="Um par de bilhetes de cinema rasgados"></div>
-                <div class="text"><h3>Dates Inesquecíveis</h3><p>O que tem de mais inesquecível que o primeiro, né? Você me levou pra assistir Nosferatu e, meu Deus, que filme maldito kkkk, mas foi algo que marcou bastante. Ter que cancelar um pedido no Outback porque nenhum dos dois tinha apetite foi uma coisa que nunca tinha me acontecido. E eu adoro cada detalhe dessa história.</p></div>
-            </div>
-            <div class="moment reverse">
-                <div class="image-placeholder"><img src="casa-videogame.jpg" alt="Dois controles de videogame lado a lado num sofá"></div>
-                <div class="text"><h3>O Conforto de Ficar em Casa</h3><p>Muita gente não gosta, mas eu acho incrível como é bom ficar com você sem fazer absolutamente nada. Só o fato de você estar por perto já me deixa tranquilo. Descansar, jogar videogame e ficar abraçadinho com você com certeza é melhor do que muito date por aí.</p></div>
-            </div>
-            <div class="moment">
-                <div class="image-placeholder"><img src="viagens-sonho.jpg" alt="Um mapa-múndi com pins em vários locais de sonho"></div>
-                <div class="text"><h3>Nossas Viagens</h3><p>Elas ainda não aconteceram, mas eu penso todos os dias no momento em que a gente vai viajar junto. Sinto que vai ser engraçado e tenso, porque mesmo sendo responsáveis, somos dois imbecis. E mal posso esperar por cada segundo dessa aventura.</p></div>
-            </div>
-            <div class="moment reverse">
-                <div class="image-placeholder"><img src="simplesmente-nos.jpg" alt="Uma garrafa de Smirnoff Ice e um Funko Pop da Coraline"></div>
-                <div class="text"><h3>Simplesmente Nós</h3><p>Nos momentos de bobeira, nas conversas sérias, no apoio incondicional. Seja vendo um anime ou dividindo uma Smirnoff Ice, é na simplicidade do dia a dia que eu encontro a certeza do nosso amor. Te amo por tudo que você é e por tudo que somos juntos.</p></div>
-            </div>
+            <div class="moment"><div class="image-placeholder"><img src="date-nosferatu.jpg" alt="Um par de bilhetes de cinema rasgados"></div><div class="text"><h3>Dates Inesquecíveis</h3><p>O que tem de mais inesquecível que o primeiro, né? Você me levou pra assistir Nosferatu e, meu Deus, que filme maldito kkkk, mas foi algo que marcou bastante. Ter que cancelar um pedido no Outback porque nenhum dos dois tinha apetite foi uma coisa que nunca tinha me acontecido. E eu adoro cada detalhe dessa história.</p></div></div>
+            <div class="moment reverse"><div class="image-placeholder"><img src="casa-videogame.jpg" alt="Dois controles de videogame lado a lado num sofá"></div><div class="text"><h3>O Conforto de Ficar em Casa</h3><p>Muita gente não gosta, mas eu acho incrível como é bom ficar com você sem fazer absolutamente nada. Só o fato de você estar por perto já me deixa tranquilo. Descansar, jogar videogame e ficar abraçadinho com você com certeza é melhor do que muito date por aí.</p></div></div>
+            <div class="moment"><div class="image-placeholder"><img src="viagens-sonho.jpg" alt="Um mapa-múndi com pins em vários locais de sonho"></div><div class="text"><h3>Nossas Viagens</h3><p>Elas ainda não aconteceram, mas eu penso todos os dias no momento em que a gente vai viajar junto. Sinto que vai ser engraçado e tenso, porque mesmo sendo responsáveis, somos dois imbecis. E mal posso esperar por cada segundo dessa aventura.</p></div></div>
+            <div class="moment reverse"><div class="image-placeholder"><img src="simplesmente-nos.jpg" alt="Uma garrafa de Smirnoff Ice e um Funko Pop da Coraline"></div><div class="text"><h3>Simplesmente Nós</h3><p>Nos momentos de bobeira, nas conversas sérias, no apoio incondicional. Seja vendo um anime ou dividindo uma Smirnoff Ice, é na simplicidade do dia a dia que eu encontro a certeza do nosso amor. Te amo por tudo que você é e por tudo que somos juntos.</p></div></div>
         </section>
     </main>
 
     <footer><p>Feito com todo o carinho do mundo pra você. ❤️</p></footer>
 
-    <!-- Lógica do JavaScript para controlar o botão e a música -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // ALTERADO: Lógica para tocar o áudio local
-            const playButton = document.getElementById('play-music-btn');
-            const musicOverlay = document.getElementById('music-overlay');
-            const backgroundMusic = document.getElementById('background-music');
+    <!-- Player do YouTube (escondido) -->
+    <div id="youtube-player"></div>
 
-            playButton.addEventListener('click', () => {
-                backgroundMusic.play();
-                
-                musicOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    musicOverlay.style.display = 'none';
-                }, 500);
+    <script>
+        // Carrega a API do YouTube Player de forma assíncrona.
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: '36W_wRuPYbs', // ID do vídeo do YouTube
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': '36W_wRuPYbs' // Necessário para o loop funcionar
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Define o volume inicial
+            const volumeSlider = document.getElementById('volume-slider');
+            event.target.setVolume(volumeSlider.value);
+        }
+
+        // Lógica do player
+        document.addEventListener('DOMContentLoaded', function() {
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const volumeSlider = document.getElementById('volume-slider');
+            const playerText = document.getElementById('player-text');
+
+            playPauseBtn.addEventListener('click', () => {
+                if (player && typeof player.getPlayerState === 'function') {
+                    const playerState = player.getPlayerState();
+                    if (playerState === YT.PlayerState.PLAYING) {
+                        player.pauseVideo();
+                    } else {
+                        player.playVideo();
+                    }
+                }
+                if (playerText.style.opacity !== '0') {
+                    playerText.style.opacity = '0';
+                }
             });
 
-            // --- CÓDIGO DO CONTADOR (inalterado) ---
-            const startDate = new Date('2025-03-08T15:00:00');
-            const yearsEl = document.getElementById('years');
-            const monthsEl = document.getElementById('months');
-            const daysEl = document.getElementById('days');
-            const hoursEl = document.getElementById('hours');
-            const minutesEl = document.getElementById('minutes');
-            const secondsEl = document.getElementById('seconds');
-
-            function updateTimer() {
-                const now = new Date();
-                if (now < startDate) return;
-
-                let years = now.getFullYear() - startDate.getFullYear();
-                let months = now.getMonth() - startDate.getMonth();
-                let days = now.getDate() - startDate.getDate();
-                let hours = now.getHours() - startDate.getHours();
-                let minutes = now.getMinutes() - startDate.getMinutes();
-                let seconds = now.getSeconds() - startDate.getSeconds();
-
-                if (seconds < 0) { seconds += 60; minutes--; }
-                if (minutes < 0) { minutes += 60; hours--; }
-                if (hours < 0) { hours += 24; days--; }
-                if (days < 0) {
-                    const daysInLastMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
-                    days += daysInLastMonth;
-                    months--;
+            volumeSlider.addEventListener('input', () => {
+                if (player && typeof player.setVolume === 'function') {
+                    player.setVolume(volumeSlider.value);
                 }
-                if (months < 0) { months += 12; years--; }
-                
-                yearsEl.innerText = years;
-                monthsEl.innerText = months;
-                daysEl.innerText = days;
-                hoursEl.innerText = hours;
-                minutesEl.innerText = minutes;
-                secondsEl.innerText = seconds;
-            }
-
-            setInterval(updateTimer, 1000);
-            updateTimer();
-
-            // --- CÓDIGO DOS CORAÇÕES (inalterado) ---
-            const heartsContainer = document.querySelector('.hearts-container');
-            const heartsToCreate = 25;
-
-            for (let i = 0; i < heartsToCreate; i++) {
-                let heart = document.createElement('div');
-                heart.className = 'heart';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.animationDuration = Math.random() * 7 + 8 + 's';
-                heart.style.animationDelay = Math.random() * 5 + 's';
-                heartsContainer.appendChild(heart);
-            }
+            });
         });
+
+        function onPlayerStateChange(event) {
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            if (event.data === YT.PlayerState.PLAYING) {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        }
+        
+        // --- CÓDIGO DO CONTADOR (inalterado) ---
+        const startDate = new Date('2025-03-08T15:00:00');
+        const yearsEl = document.getElementById('years');
+        const monthsEl = document.getElementById('months');
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        function updateTimer() {
+            const now = new Date();
+            if (now < startDate) return;
+
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+            let hours = now.getHours() - startDate.getHours();
+            let minutes = now.getMinutes() - startDate.getMinutes();
+            let seconds = now.getSeconds() - startDate.getSeconds();
+
+            if (seconds < 0) { seconds += 60; minutes--; }
+            if (minutes < 0) { minutes += 60; hours--; }
+            if (hours < 0) { hours += 24; days--; }
+            if (days < 0) {
+                const daysInLastMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                days += daysInLastMonth;
+                months--;
+            }
+            if (months < 0) { months += 12; years--; }
+            
+            yearsEl.innerText = years;
+            monthsEl.innerText = months;
+            daysEl.innerText = days;
+            hoursEl.innerText = hours;
+            minutesEl.innerText = minutes;
+            secondsEl.innerText = seconds;
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // --- CÓDIGO DOS CORAÇÕES (inalterado) ---
+        const heartsContainer = document.querySelector('.hearts-container');
+        const heartsToCreate = 25;
+
+        for (let i = 0; i < heartsToCreate; i++) {
+            let heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 7 + 8 + 's';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            heartsContainer.appendChild(heart);
+        }
     </script>
 </body>
 </html>
