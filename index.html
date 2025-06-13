@@ -30,6 +30,52 @@
             overflow-x: hidden;
         }
         
+        /* NOVO: Estilos para a sobreposição de música */
+        #music-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001; /* Z-index mais alto */
+            transition: opacity 0.5s ease;
+        }
+        
+        .overlay-content {
+            text-align: center;
+            color: var(--white);
+            padding: 40px;
+        }
+        
+        .overlay-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        #play-music-btn {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 35px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        #play-music-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
         /* Contentor para os corações animados */
         .hearts-container {
             position: fixed;
@@ -112,62 +158,49 @@
         .polaroid.p1 { transform: translateX(-40px) rotate(-7deg); }
         .polaroid.p2 { transform: translateX(40px) rotate(8deg); }
 
-        /* NOVO: Player de música personalizado */
-        .music-player-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin-top: -20px;
-            margin-bottom: 20px;
-        }
-
-        .player-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
+        /* NOVO: Controle de volume visível */
+        #visible-volume-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
             background-color: var(--white);
-            padding: 15px 30px;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        #play-pause-btn {
-            background-color: var(--primary-color);
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        #play-pause-btn:hover {
-            background-color: var(--secondary-color);
-        }
-        #play-pause-btn svg {
-            width: 30px;
-            height: 30px;
-            fill: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            text-align: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+            opacity: 0; /* Começa invisível */
+            pointer-events: none; /* Começa não clicável */
         }
         
-        .volume-control {
+        #visible-volume-control.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #visible-volume-control p {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-size: 0.9em;
+        }
+
+        .volume-slider-box {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .volume-control svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--text-light);
+
+        .volume-slider-box .icon {
+            font-size: 1.5em;
+            color: var(--primary-color);
         }
+
         #volume-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 100px;
+            width: 120px;
             height: 5px;
             background: #e0e0e0;
             border-radius: 5px;
@@ -188,17 +221,11 @@
             background: var(--primary-color);
             border-radius: 50%;
         }
-
-        #player-text {
-            margin-top: 15px;
-            color: var(--primary-color);
-            font-weight: bold;
-            transition: opacity 0.5s;
-        }
-
+        
         #timer-section {
             text-align: center;
             padding: 40px 20px;
+            margin-top: 20px; /* Espaço para o player que foi removido */
             background-color: rgba(255, 255, 255, 0.7);
         }
 
@@ -232,6 +259,11 @@
         #youtube-player { display: none; }
 
         @media (max-width: 768px) {
+            #visible-volume-control {
+                bottom: 10px;
+                right: 10px;
+                padding: 15px;
+            }
             .polaroids { height: auto; flex-direction: column; gap: 20px; padding-top: 20px; padding-bottom: 20px; }
             .polaroid { position: static; transform: rotate(0) !important; }
             .moment, .moment.reverse { flex-direction: column; }
@@ -242,6 +274,14 @@
 <body>
     
     <div class="hearts-container"></div>
+
+    <!-- Tela de início para dar play na música -->
+    <div id="music-overlay">
+        <div class="overlay-content">
+            <h3>Uma surpresa para você...</h3>
+            <button id="play-music-btn">Clica aqui rs</button>
+        </div>
+    </div>
 
     <header>
         <h1>Para o Amor da Minha Vida</h1>
@@ -259,27 +299,16 @@
             </div>
         </section>
 
-        <!-- NOVO: Player de música personalizado -->
-        <div class="music-player-container">
-            <div class="player-controls">
-                <div class="volume-control">
-                    <!-- Icone de Volume Baixo -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 12h-2V8h2v4Zm3-4H4v12h16V8Zm-2 10H6V10h12v8Z"/></svg>
-                </div>
-                <button id="play-pause-btn">
-                    <!-- Icone de Play -->
-                    <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5z"/></svg>
-                    <!-- Icone de Pause (escondido inicialmente) -->
-                    <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                </button>
-                <div class="volume-control">
-                    <input type="range" id="volume-slider" min="0" max="100" value="70">
-                    <!-- Icone de Volume Alto -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                </div>
+        <!-- Controle de volume visível (começa escondido) -->
+        <div id="visible-volume-control">
+            <p>SE VOCÊ TIVER FICADO SURDA, AJUSTA AQUI!</p>
+            <div class="volume-slider-box">
+                <span class="icon">→</span>
+                <input type="range" id="volume-slider" min="0" max="100" value="70">
+                <span class="icon">❤️</span>
             </div>
-            <p id="player-text">Clica aqui hehehe</p>
         </div>
+
 
         <section id="timer-section">
             <h3>Nosso tempo juntos:</h3>
@@ -330,38 +359,34 @@
                     'playlist': '36W_wRuPYbs' // Necessário para o loop funcionar
                 },
                 events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+                    'onReady': onPlayerReady
                 }
             });
         }
 
         function onPlayerReady(event) {
-            // Define o volume inicial
             const volumeSlider = document.getElementById('volume-slider');
             event.target.setVolume(volumeSlider.value);
         }
 
-        // Lógica do player
+        // Lógica do player e volume
         document.addEventListener('DOMContentLoaded', function() {
-            const playPauseBtn = document.getElementById('play-pause-btn');
-            const playIcon = document.getElementById('play-icon');
-            const pauseIcon = document.getElementById('pause-icon');
+            const playMusicBtn = document.getElementById('play-music-btn');
+            const musicOverlay = document.getElementById('music-overlay');
+            const volumeControl = document.getElementById('visible-volume-control');
             const volumeSlider = document.getElementById('volume-slider');
-            const playerText = document.getElementById('player-text');
 
-            playPauseBtn.addEventListener('click', () => {
-                if (player && typeof player.getPlayerState === 'function') {
-                    const playerState = player.getPlayerState();
-                    if (playerState === YT.PlayerState.PLAYING) {
-                        player.pauseVideo();
-                    } else {
-                        player.playVideo();
-                    }
+            playMusicBtn.addEventListener('click', () => {
+                if (player && typeof player.playVideo === 'function') {
+                    player.playVideo();
                 }
-                if (playerText.style.opacity !== '0') {
-                    playerText.style.opacity = '0';
-                }
+                // Esconde a tela de início
+                musicOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    musicOverlay.style.display = 'none';
+                }, 500);
+                // Mostra o controle de volume
+                volumeControl.classList.add('visible');
             });
 
             volumeSlider.addEventListener('input', () => {
@@ -370,18 +395,6 @@
                 }
             });
         });
-
-        function onPlayerStateChange(event) {
-            const playIcon = document.getElementById('play-icon');
-            const pauseIcon = document.getElementById('pause-icon');
-            if (event.data === YT.PlayerState.PLAYING) {
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'block';
-            } else {
-                playIcon.style.display = 'block';
-                pauseIcon.style.display = 'none';
-            }
-        }
         
         // --- CÓDIGO DO CONTADOR (inalterado) ---
         const startDate = new Date('2025-03-08T15:00:00');
